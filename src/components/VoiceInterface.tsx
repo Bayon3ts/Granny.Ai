@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -19,6 +20,63 @@ export const VoiceInterface = () => {
       timestamp: new Date(),
     },
   ]);
+  const { toast } = useToast();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const playTextToSpeech = async (text: string) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/text-to-speech`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            text,
+            voiceId: "9BWtsMINqrJLrRacOk9x" // Aria voice - warm and caring
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        console.error('TTS failed:', error);
+        toast({
+          title: "Voice Error",
+          description: "Couldn't generate speech. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const blob = await response.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        audioRef.current = null;
+      };
+      
+      await audio.play();
+    } catch (error) {
+      console.error('Error playing TTS:', error);
+      toast({
+        title: "Playback Error",
+        description: "Couldn't play audio. Please check your speakers.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const toggleListening = () => {
     setIsListening(!isListening);
@@ -34,14 +92,19 @@ export const VoiceInterface = () => {
         };
         setMessages((prev) => [...prev, userMessage]);
         
-        setTimeout(() => {
+        setTimeout(async () => {
+          const responseText = "Of course, dear. I'll call your son right away. 💕";
           const assistantMessage: Message = {
             id: (Date.now() + 1).toString(),
             type: "assistant",
-            text: "Of course, dear. I'll call your son right away. 💕",
+            text: responseText,
             timestamp: new Date(),
           };
           setMessages((prev) => [...prev, assistantMessage]);
+          
+          // Play the response using ElevenLabs TTS
+          await playTextToSpeech(responseText);
+          
           setIsListening(false);
         }, 1500);
       }, 2000);
