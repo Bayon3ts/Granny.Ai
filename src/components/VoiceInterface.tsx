@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import aiOrb from "@/assets/ai-orb.png";
+import { useEffect, useState } from "react";
+import { AnimatedOrb } from "./AnimatedOrb";
 
 declare global {
   namespace JSX {
@@ -10,6 +10,8 @@ declare global {
 }
 
 export const VoiceInterface = () => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
   useEffect(() => {
     // Load the ElevenLabs widget script
     const script = document.createElement('script');
@@ -18,11 +20,20 @@ export const VoiceInterface = () => {
     script.type = 'text/javascript';
     document.body.appendChild(script);
 
+    // Listen for ElevenLabs widget events
+    const handleWidgetEvent = (event: any) => {
+      if (event.detail?.type === 'speaking') {
+        setIsSpeaking(event.detail.isSpeaking);
+      }
+    };
+
+    window.addEventListener('elevenlabs-speaking', handleWidgetEvent);
+
     return () => {
-      // Cleanup script on unmount
       if (document.body.contains(script)) {
         document.body.removeChild(script);
       }
+      window.removeEventListener('elevenlabs-speaking', handleWidgetEvent);
     };
   }, []);
 
@@ -38,16 +49,9 @@ export const VoiceInterface = () => {
         </p>
       </div>
 
-      {/* AI Orb Center Piece */}
-      <div className="relative w-full max-w-2xl aspect-video flex items-center justify-center mb-8">
-        <img 
-          src={aiOrb} 
-          alt="AI Interface" 
-          className="w-full h-full object-contain animate-pulse-soft"
-          style={{
-            animation: 'pulse-soft 3s ease-in-out infinite, spin 20s linear infinite'
-          }}
-        />
+      {/* 3D Animated Orb */}
+      <div className="w-full max-w-2xl aspect-video mb-8">
+        <AnimatedOrb isSpeaking={isSpeaking} />
       </div>
 
       {/* ElevenLabs Conversational AI Widget */}
