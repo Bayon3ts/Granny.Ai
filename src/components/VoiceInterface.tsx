@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import aiOrb from "@/assets/ai-orb.png";
 
 declare global {
   namespace JSX {
@@ -37,8 +38,20 @@ export const VoiceInterface = () => {
         </p>
       </div>
 
+      {/* AI Orb Center Piece */}
+      <div className="relative w-full max-w-2xl aspect-video flex items-center justify-center mb-8">
+        <img 
+          src={aiOrb} 
+          alt="AI Interface" 
+          className="w-full h-full object-contain animate-pulse-soft"
+          style={{
+            animation: 'pulse-soft 3s ease-in-out infinite, spin 20s linear infinite'
+          }}
+        />
+      </div>
+
       {/* ElevenLabs Conversational AI Widget */}
-      <div className="w-full max-w-4xl flex-1 flex items-center justify-center">
+      <div className="w-full max-w-4xl flex items-center justify-center">
         <elevenlabs-convai agent-id="agent_8801k8m0db1qed7ax67n2efe693j" />
       </div>
     </div>
