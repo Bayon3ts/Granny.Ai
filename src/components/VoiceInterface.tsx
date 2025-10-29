@@ -39,70 +39,95 @@ export const VoiceInterface = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden">
-      {/* Deep dark background */}
-      <div className="absolute inset-0 bg-[#0a0e1a]">
-        {/* Subtle star field */}
-        <div className="absolute inset-0 opacity-40">
-          {[...Array(80)].map((_, i) => (
+      {/* Exact reference background gradient */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(180deg, #020617 0%, #0B1120 100%)'
+      }}>
+        {/* Star particles with subtle motion */}
+        <div className="absolute inset-0 opacity-50">
+          {[...Array(120)].map((_, i) => (
             <div
               key={i}
-              className="absolute rounded-full bg-[#4fc3f7]"
+              className="absolute rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                width: `${Math.random() * 2 + 1}px`,
-                height: `${Math.random() * 2 + 1}px`,
-                animation: `pulse-core ${2 + Math.random() * 3}s ease-in-out infinite`,
+                width: `${Math.random() * 2 + 0.5}px`,
+                height: `${Math.random() * 2 + 0.5}px`,
+                background: i % 3 === 0 ? '#6EE7F9' : i % 3 === 1 ? '#A5F3FC' : '#A78BFA',
+                animation: `pulse-core ${2 + Math.random() * 4}s ease-in-out infinite`,
                 animationDelay: `${Math.random() * 3}s`,
-                opacity: Math.random() * 0.6 + 0.2,
+                opacity: Math.random() * 0.7 + 0.2,
+                boxShadow: `0 0 ${Math.random() * 4 + 2}px currentColor`,
               }}
             />
           ))}
         </div>
         
-        {/* Faint horizontal tech lines */}
-        <div className="absolute inset-0 opacity-20">
-          {[...Array(12)].map((_, i) => (
+        {/* Thin horizontal scan lines */}
+        <div className="absolute inset-0 opacity-10">
+          {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent"
+              className="absolute w-full h-[1px]"
               style={{
-                top: `${(i + 1) * 8}%`,
-                opacity: 0.3,
+                top: `${(i + 1) * 5}%`,
+                background: 'linear-gradient(90deg, transparent, #6EE7F9 50%, transparent)',
+                opacity: 0.2,
               }}
             />
           ))}
         </div>
+        
+        {/* Light grid texture */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: 'linear-gradient(#6EE7F9 1px, transparent 1px), linear-gradient(90deg, #6EE7F9 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
       </div>
 
-      {/* Header - Top Left like reference */}
+      {/* Header - Top Left matching reference */}
       <div className="absolute top-8 left-8 z-20 animate-fade-in">
         <div className="flex items-center gap-3">
           <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
             isSpeaking 
-              ? 'bg-[#4fc3f7] shadow-[0_0_20px_#4fc3f7] animate-pulse-intense' 
-              : 'bg-[#7dd3c0] shadow-[0_0_10px_#7dd3c0]'
+              ? 'bg-[#6EE7F9] shadow-[0_0_20px_#6EE7F9] animate-pulse-intense' 
+              : 'bg-[#6EE7F9] shadow-[0_0_12px_#6EE7F9]'
           }`} />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#4fc3f7] via-[#b794f6] to-[#7dd3c0] bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold" style={{
+              background: 'linear-gradient(135deg, #6EE7F9, #A78BFA)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
               Granny.AI
             </h1>
-            <p className="text-xs md:text-sm text-[#4fc3f7]/60 font-light tracking-wider">
+            <p className="text-xs md:text-sm font-light tracking-wider" style={{
+              color: '#CBD5E1'
+            }}>
               The Wise Digital Companion
             </p>
           </div>
         </div>
       </div>
 
-      {/* 3D Animated Core - Centered */}
-      <div className="relative z-10 w-full max-w-4xl aspect-video">
-        {/* Pulsing expanding waves when speaking */}
+      {/* 3D Animated Core - Centered matching reference proportions */}
+      <div className="relative z-10 w-full max-w-5xl aspect-video">
+        {/* Five concentric glowing rings with staggered expansion */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {isSpeaking && (
             <>
-              <div className="absolute w-72 h-72 border border-[#4fc3f7]/40 rounded-full animate-wave-expand" />
-              <div className="absolute w-72 h-72 border border-[#4fc3f7]/25 rounded-full animate-wave-expand" style={{ animationDelay: '0.4s' }} />
-              <div className="absolute w-72 h-72 border border-[#4fc3f7]/15 rounded-full animate-wave-expand" style={{ animationDelay: '0.8s' }} />
+              <div className="absolute w-64 h-64 border border-[#6EE7F9]/50 rounded-full animate-wave-expand" 
+                   style={{ animationDuration: '3s', boxShadow: '0 0 20px rgba(110, 231, 249, 0.3)' }} />
+              <div className="absolute w-64 h-64 border border-[#A5F3FC]/40 rounded-full animate-wave-expand" 
+                   style={{ animationDelay: '0.6s', animationDuration: '3s', boxShadow: '0 0 15px rgba(165, 243, 252, 0.2)' }} />
+              <div className="absolute w-64 h-64 border border-[#6EE7F9]/30 rounded-full animate-wave-expand" 
+                   style={{ animationDelay: '1.2s', animationDuration: '3s', boxShadow: '0 0 12px rgba(110, 231, 249, 0.15)' }} />
+              <div className="absolute w-64 h-64 border border-[#A5F3FC]/20 rounded-full animate-wave-expand" 
+                   style={{ animationDelay: '1.8s', animationDuration: '3s', boxShadow: '0 0 10px rgba(165, 243, 252, 0.1)' }} />
+              <div className="absolute w-64 h-64 border border-[#6EE7F9]/15 rounded-full animate-wave-expand" 
+                   style={{ animationDelay: '2.4s', animationDuration: '3s', boxShadow: '0 0 8px rgba(110, 231, 249, 0.08)' }} />
             </>
           )}
         </div>
@@ -115,15 +140,17 @@ export const VoiceInterface = () => {
         <elevenlabs-convai agent-id="agent_8801k8m0db1qed7ax67n2efe693j" />
       </div>
 
-      {/* Talk to Granny floating button - matching reference style */}
+      {/* Talk to Granny button - exact reference styling */}
       <button
-        className={`fixed bottom-8 right-8 z-50 px-8 py-4 rounded-full font-medium transition-all duration-300 border ${
+        className={`fixed bottom-8 right-8 z-50 px-8 py-4 rounded-full font-medium transition-all duration-300 backdrop-blur-md ${
           isSpeaking 
-            ? 'bg-white text-[#0a0e1a] border-white shadow-[0_0_40px_rgba(79,195,247,0.8)] scale-105' 
-            : 'bg-white/90 text-[#0a0e1a] border-white/90 shadow-[0_0_25px_rgba(79,195,247,0.5)] hover:scale-105 hover:shadow-[0_0_35px_rgba(79,195,247,0.7)]'
+            ? 'bg-white text-[#020617] shadow-[0_0_30px_rgba(110,231,249,0.8)] scale-105' 
+            : 'bg-white text-[#020617] shadow-[0_0_20px_rgba(110,231,249,0.5)] hover:scale-105 hover:shadow-[0_0_35px_rgba(110,231,249,0.7)]'
         }`}
+        style={{
+          border: isSpeaking ? '1px solid rgba(110, 231, 249, 0.5)' : '1px solid rgba(110, 231, 249, 0.3)',
+        }}
         onClick={() => {
-          // ElevenLabs widget handles the interaction
           const widget = document.querySelector('elevenlabs-convai');
           if (widget) {
             (widget as any).click?.();
@@ -133,8 +160,8 @@ export const VoiceInterface = () => {
         <div className="flex items-center gap-3">
           <div className={`w-3 h-3 rounded-full transition-all ${
             isSpeaking 
-              ? 'bg-[#4fc3f7] shadow-[0_0_10px_#4fc3f7] animate-pulse-intense' 
-              : 'bg-[#7dd3c0] shadow-[0_0_8px_#7dd3c0]'
+              ? 'bg-[#6EE7F9] shadow-[0_0_12px_#6EE7F9] animate-pulse-intense' 
+              : 'bg-[#6EE7F9] shadow-[0_0_8px_#6EE7F9]'
           }`} />
           <span className="text-sm font-semibold tracking-wide">
             {isSpeaking ? 'Listening...' : 'Talk to Granny'}

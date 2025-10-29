@@ -9,43 +9,46 @@ interface OrbProps {
 
 function CoreOrb({ isSpeaking }: OrbProps) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const distortRef = useRef(0.2);
+  const distortRef = useRef(0.15);
   const scaleRef = useRef(1);
-  const intensityRef = useRef(1.5);
+  const intensityRef = useRef(3);
 
   useFrame((state) => {
     if (!meshRef.current) return;
 
     const time = state.clock.getElapsedTime();
     
-    // Subtle rotation
-    meshRef.current.rotation.y = time * 0.15;
+    // Breathing rotation
+    meshRef.current.rotation.y = time * 0.1;
 
-    // Dynamic distortion and scale based on speaking state
-    const targetDistort = isSpeaking ? 0.4 : 0.2;
-    const targetScale = isSpeaking ? 1.15 : 1;
-    const targetIntensity = isSpeaking ? 2.5 : 1.5;
+    // Breathing pulse based on speaking state
+    const targetDistort = isSpeaking ? 0.25 : 0.15;
+    const targetScale = isSpeaking ? 1.08 : 1.04;
+    const targetIntensity = isSpeaking ? 4 : 3;
     
-    distortRef.current += (targetDistort - distortRef.current) * 0.08;
-    scaleRef.current += (targetScale - scaleRef.current) * 0.08;
-    intensityRef.current += (targetIntensity - intensityRef.current) * 0.08;
+    // Add breathing rhythm
+    const breathe = Math.sin(time * 0.5) * 0.02 + 1;
+    
+    distortRef.current += (targetDistort - distortRef.current) * 0.05;
+    scaleRef.current += (targetScale * breathe - scaleRef.current) * 0.05;
+    intensityRef.current += (targetIntensity - intensityRef.current) * 0.05;
 
     meshRef.current.scale.setScalar(scaleRef.current);
   });
 
   return (
-    <Sphere ref={meshRef} args={[1, 100, 100]}>
+    <Sphere ref={meshRef} args={[1, 128, 128]}>
       <MeshDistortMaterial
-        color="#4fc3f7"
+        color="#6EE7F9"
         attach="material"
         distort={distortRef.current}
-        speed={isSpeaking ? 2.5 : 1.5}
-        roughness={0.1}
-        metalness={0.9}
-        emissive="#00bcd4"
+        speed={isSpeaking ? 2 : 1.2}
+        roughness={0}
+        metalness={1}
+        emissive="#A5F3FC"
         emissiveIntensity={intensityRef.current}
         transparent
-        opacity={0.9}
+        opacity={0.95}
       />
     </Sphere>
   );
@@ -58,22 +61,22 @@ function HorizontalLines({ isSpeaking }: OrbProps) {
     if (!linesRef.current) return;
     const time = state.clock.getElapsedTime();
     linesRef.current.children.forEach((line, i) => {
-      const offset = i * 0.2;
+      const offset = i * 0.3;
       const mesh = line as THREE.Mesh;
       const material = mesh.material as THREE.MeshBasicMaterial;
-      material.opacity = 0.3 + Math.sin(time * (isSpeaking ? 3 : 1.5) + offset) * 0.2;
+      material.opacity = 0.15 + Math.sin(time * (isSpeaking ? 2 : 1) + offset) * 0.1;
     });
   });
 
   return (
     <group ref={linesRef}>
-      {[-1.5, -0.75, 0, 0.75, 1.5].map((y, i) => (
+      {[-2, -1, 0, 1, 2].map((y, i) => (
         <mesh key={i} position={[0, y, 0]}>
-          <planeGeometry args={[10, 0.02]} />
+          <planeGeometry args={[12, 0.015]} />
           <meshBasicMaterial 
-            color="#4fc3f7" 
+            color="#6EE7F9" 
             transparent 
-            opacity={0.3} 
+            opacity={0.15} 
             side={THREE.DoubleSide} 
           />
         </mesh>
@@ -83,34 +86,53 @@ function HorizontalLines({ isSpeaking }: OrbProps) {
 }
 
 function CircularRings({ isSpeaking }: OrbProps) {
-  const outerRing = useRef<THREE.Mesh>(null);
-  const middleRing = useRef<THREE.Mesh>(null);
+  const ring1 = useRef<THREE.Mesh>(null);
+  const ring2 = useRef<THREE.Mesh>(null);
+  const ring3 = useRef<THREE.Mesh>(null);
+  const ring4 = useRef<THREE.Mesh>(null);
+  const ring5 = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
-    const speed = isSpeaking ? 0.5 : 0.3;
+    const speed = isSpeaking ? 0.3 : 0.2;
     
-    if (outerRing.current) {
-      outerRing.current.rotation.z = time * speed;
-    }
-    if (middleRing.current) {
-      middleRing.current.rotation.z = -time * speed * 0.8;
-    }
+    if (ring1.current) ring1.current.rotation.z = time * speed;
+    if (ring2.current) ring2.current.rotation.z = -time * speed * 0.8;
+    if (ring3.current) ring3.current.rotation.z = time * speed * 0.6;
+    if (ring4.current) ring4.current.rotation.z = -time * speed * 0.4;
+    if (ring5.current) ring5.current.rotation.z = time * speed * 0.5;
   });
 
   return (
     <>
-      <mesh ref={outerRing}>
-        <torusGeometry args={[2.5, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#4fc3f7" transparent opacity={isSpeaking ? 0.6 : 0.4} />
+      {/* Innermost ring */}
+      <mesh ref={ring1}>
+        <torusGeometry args={[1.3, 0.008, 32, 100]} />
+        <meshBasicMaterial color="#6EE7F9" transparent opacity={isSpeaking ? 0.4 : 0.25} />
       </mesh>
-      <mesh ref={middleRing}>
-        <torusGeometry args={[2, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#b794f6" transparent opacity={isSpeaking ? 0.5 : 0.3} />
+      
+      {/* Second ring */}
+      <mesh ref={ring2}>
+        <torusGeometry args={[1.7, 0.008, 32, 100]} />
+        <meshBasicMaterial color="#A5F3FC" transparent opacity={isSpeaking ? 0.35 : 0.2} />
       </mesh>
-      <mesh>
-        <torusGeometry args={[1.5, 0.015, 16, 100]} />
-        <meshBasicMaterial color="#7dd3c0" transparent opacity={isSpeaking ? 0.7 : 0.5} />
+      
+      {/* Middle ring */}
+      <mesh ref={ring3}>
+        <torusGeometry args={[2.1, 0.008, 32, 100]} />
+        <meshBasicMaterial color="#6EE7F9" transparent opacity={isSpeaking ? 0.3 : 0.18} />
+      </mesh>
+      
+      {/* Fourth ring */}
+      <mesh ref={ring4}>
+        <torusGeometry args={[2.5, 0.008, 32, 100]} />
+        <meshBasicMaterial color="#A5F3FC" transparent opacity={isSpeaking ? 0.25 : 0.15} />
+      </mesh>
+      
+      {/* Outermost ring */}
+      <mesh ref={ring5}>
+        <torusGeometry args={[2.9, 0.008, 32, 100]} />
+        <meshBasicMaterial color="#6EE7F9" transparent opacity={isSpeaking ? 0.2 : 0.12} />
       </mesh>
     </>
   );
@@ -119,31 +141,47 @@ function CircularRings({ isSpeaking }: OrbProps) {
 export function AnimatedOrb({ isSpeaking }: OrbProps) {
   return (
     <div className="w-full h-full relative">
-      {/* Centered glowing background */}
+      {/* Intense centered glow matching reference */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-96 h-96 rounded-full transition-all duration-500 ${
+        <div className={`w-[500px] h-[500px] rounded-full transition-all duration-500 ${
           isSpeaking 
-            ? 'bg-[#4fc3f7]/30 blur-[120px]' 
-            : 'bg-[#4fc3f7]/20 blur-[100px]'
+            ? 'bg-[#6EE7F9]/40 blur-[150px] animate-breathe' 
+            : 'bg-[#6EE7F9]/30 blur-[120px] animate-breathe'
+        }`} />
+      </div>
+      
+      {/* Inner core glow */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className={`w-[200px] h-[200px] rounded-full transition-all duration-300 ${
+          isSpeaking 
+            ? 'bg-white/50 blur-[80px]' 
+            : 'bg-white/30 blur-[60px]'
         }`} />
       </div>
       
       <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
-        {/* Focused lighting */}
-        <ambientLight intensity={0.2} />
+        {/* Enhanced lighting for intense glow */}
+        <ambientLight intensity={0.3} />
         <pointLight 
           position={[0, 0, 0]} 
+          intensity={isSpeaking ? 5 : 3.5} 
+          color="#6EE7F9"
+          distance={15}
+          decay={2}
+        />
+        <pointLight 
+          position={[0, 0, 4]} 
           intensity={isSpeaking ? 3 : 2} 
-          color="#00bcd4"
+          color="#A5F3FC"
           distance={10}
         />
         <pointLight 
-          position={[0, 0, 5]} 
-          intensity={isSpeaking ? 2 : 1} 
-          color="#4fc3f7"
+          position={[3, 0, 3]} 
+          intensity={1} 
+          color="#A78BFA"
         />
         
-        {/* Core components matching reference */}
+        {/* Core components */}
         <CoreOrb isSpeaking={isSpeaking} />
         <CircularRings isSpeaking={isSpeaking} />
         <HorizontalLines isSpeaking={isSpeaking} />
