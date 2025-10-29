@@ -57,16 +57,16 @@ export const VoiceInterface = () => {
         </div>
         
         {/* Tech grid lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,191,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,191,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(180,148,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(180,148,246,0.1)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
       </div>
 
       {/* Header */}
       <div className="relative z-10 text-center space-y-2 animate-fade-in mb-8">
-        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,191,255,0.5)]">
-          J.A.R.V.I.S.
+        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(180,148,246,0.5)]">
+          Granny.AI
         </h1>
         <p className="text-lg md:text-xl text-primary/80 font-light tracking-wide">
-          Just A Rather Very Intelligent System
+          The Wise Digital Companion
         </p>
       </div>
 
@@ -98,10 +98,10 @@ export const VoiceInterface = () => {
 
       {/* Talk to JARVIS floating button */}
       <button
-        className={`fixed bottom-8 right-8 z-50 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+        className={`fixed bottom-8 right-8 z-50 px-6 py-3 rounded-full font-medium backdrop-blur-sm transition-all duration-300 ${
           isSpeaking 
-            ? 'bg-primary text-background shadow-[0_0_30px_rgba(0,191,255,0.8)] scale-110' 
-            : 'bg-primary/80 text-background shadow-[0_0_20px_rgba(0,191,255,0.4)] hover:scale-105'
+            ? 'bg-gradient-to-r from-primary to-secondary text-background shadow-[0_0_30px_rgba(180,148,246,0.8)] scale-110' 
+            : 'bg-gradient-to-r from-primary/80 to-secondary/80 text-background shadow-[0_0_20px_rgba(180,148,246,0.4)] hover:scale-105'
         }`}
         onClick={() => {
           // ElevenLabs widget handles the interaction
@@ -113,7 +113,7 @@ export const VoiceInterface = () => {
       >
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-background animate-pulse-intense' : 'bg-background/80'}`} />
-          {isSpeaking ? 'Listening...' : 'Talk to J.A.R.V.I.S.'}
+          {isSpeaking ? 'Listening...' : 'Talk to Granny'}
         </div>
       </button>
     </div>

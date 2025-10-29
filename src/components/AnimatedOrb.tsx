@@ -43,7 +43,7 @@ function Particles({ count = 50, isSpeaking }: { count?: number; isSpeaking: boo
       </bufferGeometry>
       <pointsMaterial
         size={isSpeaking ? 0.08 : 0.04}
-        color="#00d9ff"
+        color="#d4a5ff"
         transparent
         opacity={isSpeaking ? 0.8 : 0.4}
         sizeAttenuation
@@ -82,16 +82,16 @@ function CoreOrb({ isSpeaking }: OrbProps) {
   return (
     <Sphere ref={meshRef} args={[1, 128, 128]}>
       <MeshDistortMaterial
-        color="#00bfff"
+        color="#b794f6"
         attach="material"
         distort={distortRef.current}
-        speed={isSpeaking ? 4 : 1.5}
-        roughness={0.1}
-        metalness={0.9}
-        emissive="#00d9ff"
+        speed={isSpeaking ? 3 : 1.2}
+        roughness={0.2}
+        metalness={0.8}
+        emissive="#d4a5ff"
         emissiveIntensity={intensityRef.current}
         transparent
-        opacity={0.9}
+        opacity={0.85}
       />
     </Sphere>
   );
@@ -125,13 +125,13 @@ function RotatingRings({ isSpeaking }: OrbProps) {
   return (
     <>
       <Ring ref={ring1} args={[1.8, 2, 64]}>
-        <meshBasicMaterial color="#00d9ff" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#d4a5ff" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
       </Ring>
       <Ring ref={ring2} args={[2.2, 2.4, 64]}>
-        <meshBasicMaterial color="#0099cc" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#7dd3c0" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
       </Ring>
       <Ring ref={ring3} args={[2.6, 2.8, 64]}>
-        <meshBasicMaterial color="#006699" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#ffd89b" transparent opacity={ringOpacity * 0.7} side={THREE.DoubleSide} />
       </Ring>
     </>
   );
@@ -146,9 +146,10 @@ export function AnimatedOrb({ isSpeaking }: OrbProps) {
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
         {/* Enhanced lighting */}
         <ambientLight intensity={0.3} />
-        <pointLight position={[0, 0, 0]} intensity={isSpeaking ? 2 : 1} color="#00d9ff" />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#00bfff" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#0099cc" />
+        <pointLight position={[0, 0, 0]} intensity={isSpeaking ? 2 : 1} color="#d4a5ff" />
+        <pointLight position={[10, 10, 10]} intensity={0.5} color="#b794f6" />
+        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#7dd3c0" />
+        <pointLight position={[5, -5, 5]} intensity={0.2} color="#ffd89b" />
         
         {/* Core components */}
         <CoreOrb isSpeaking={isSpeaking} />
