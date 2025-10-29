@@ -39,53 +39,72 @@ export const VoiceInterface = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden">
-      {/* Animated background with stars */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background">
-        <div className="absolute inset-0 opacity-30">
-          {[...Array(50)].map((_, i) => (
+      {/* Deep dark background */}
+      <div className="absolute inset-0 bg-[#0a0e1a]">
+        {/* Subtle star field */}
+        <div className="absolute inset-0 opacity-40">
+          {[...Array(80)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-primary rounded-full animate-pulse-core"
+              className="absolute rounded-full bg-[#4fc3f7]"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
+                width: `${Math.random() * 2 + 1}px`,
+                height: `${Math.random() * 2 + 1}px`,
+                animation: `pulse-core ${2 + Math.random() * 3}s ease-in-out infinite`,
                 animationDelay: `${Math.random() * 3}s`,
-                opacity: Math.random() * 0.7 + 0.3,
+                opacity: Math.random() * 0.6 + 0.2,
               }}
             />
           ))}
         </div>
         
-        {/* Tech grid lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(180,148,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(180,148,246,0.1)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+        {/* Faint horizontal tech lines */}
+        <div className="absolute inset-0 opacity-20">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-full h-[1px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent"
+              style={{
+                top: `${(i + 1) * 8}%`,
+                opacity: 0.3,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Header */}
-      <div className="relative z-10 text-center space-y-2 animate-fade-in mb-8">
-        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(180,148,246,0.5)]">
-          Granny.AI
-        </h1>
-        <p className="text-lg md:text-xl text-primary/80 font-light tracking-wide">
-          The Wise Digital Companion
-        </p>
+      {/* Header - Top Left like reference */}
+      <div className="absolute top-8 left-8 z-20 animate-fade-in">
+        <div className="flex items-center gap-3">
+          <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
+            isSpeaking 
+              ? 'bg-[#4fc3f7] shadow-[0_0_20px_#4fc3f7] animate-pulse-intense' 
+              : 'bg-[#7dd3c0] shadow-[0_0_10px_#7dd3c0]'
+          }`} />
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#4fc3f7] via-[#b794f6] to-[#7dd3c0] bg-clip-text text-transparent">
+              Granny.AI
+            </h1>
+            <p className="text-xs md:text-sm text-[#4fc3f7]/60 font-light tracking-wider">
+              The Wise Digital Companion
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* 3D Animated Core */}
-      <div className="relative z-10 w-full max-w-3xl aspect-video mb-12">
-        {/* Pulsing waves */}
+      {/* 3D Animated Core - Centered */}
+      <div className="relative z-10 w-full max-w-4xl aspect-video">
+        {/* Pulsing expanding waves when speaking */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {isSpeaking && (
             <>
-              <div className="absolute w-64 h-64 border-2 border-primary/30 rounded-full animate-wave-expand" />
-              <div className="absolute w-64 h-64 border-2 border-primary/20 rounded-full animate-wave-expand" style={{ animationDelay: '0.5s' }} />
-              <div className="absolute w-64 h-64 border-2 border-primary/10 rounded-full animate-wave-expand" style={{ animationDelay: '1s' }} />
+              <div className="absolute w-72 h-72 border border-[#4fc3f7]/40 rounded-full animate-wave-expand" />
+              <div className="absolute w-72 h-72 border border-[#4fc3f7]/25 rounded-full animate-wave-expand" style={{ animationDelay: '0.4s' }} />
+              <div className="absolute w-72 h-72 border border-[#4fc3f7]/15 rounded-full animate-wave-expand" style={{ animationDelay: '0.8s' }} />
             </>
           )}
-        </div>
-        
-        {/* Core glow */}
-        <div className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${isSpeaking ? 'opacity-100' : 'opacity-60'}`}>
-          <div className="w-96 h-96 bg-primary/20 rounded-full blur-[100px]" />
         </div>
         
         <AnimatedOrb isSpeaking={isSpeaking} />
@@ -96,12 +115,12 @@ export const VoiceInterface = () => {
         <elevenlabs-convai agent-id="agent_8801k8m0db1qed7ax67n2efe693j" />
       </div>
 
-      {/* Talk to JARVIS floating button */}
+      {/* Talk to Granny floating button - matching reference style */}
       <button
-        className={`fixed bottom-8 right-8 z-50 px-6 py-3 rounded-full font-medium backdrop-blur-sm transition-all duration-300 ${
+        className={`fixed bottom-8 right-8 z-50 px-8 py-4 rounded-full font-medium transition-all duration-300 border ${
           isSpeaking 
-            ? 'bg-gradient-to-r from-primary to-secondary text-background shadow-[0_0_30px_rgba(180,148,246,0.8)] scale-110' 
-            : 'bg-gradient-to-r from-primary/80 to-secondary/80 text-background shadow-[0_0_20px_rgba(180,148,246,0.4)] hover:scale-105'
+            ? 'bg-white text-[#0a0e1a] border-white shadow-[0_0_40px_rgba(79,195,247,0.8)] scale-105' 
+            : 'bg-white/90 text-[#0a0e1a] border-white/90 shadow-[0_0_25px_rgba(79,195,247,0.5)] hover:scale-105 hover:shadow-[0_0_35px_rgba(79,195,247,0.7)]'
         }`}
         onClick={() => {
           // ElevenLabs widget handles the interaction
@@ -111,9 +130,15 @@ export const VoiceInterface = () => {
           }
         }}
       >
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${isSpeaking ? 'bg-background animate-pulse-intense' : 'bg-background/80'}`} />
-          {isSpeaking ? 'Listening...' : 'Talk to Granny'}
+        <div className="flex items-center gap-3">
+          <div className={`w-3 h-3 rounded-full transition-all ${
+            isSpeaking 
+              ? 'bg-[#4fc3f7] shadow-[0_0_10px_#4fc3f7] animate-pulse-intense' 
+              : 'bg-[#7dd3c0] shadow-[0_0_8px_#7dd3c0]'
+          }`} />
+          <span className="text-sm font-semibold tracking-wide">
+            {isSpeaking ? 'Listening...' : 'Talk to Granny'}
+          </span>
         </div>
       </button>
     </div>

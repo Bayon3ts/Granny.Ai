@@ -1,138 +1,117 @@
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, MeshDistortMaterial, Ring } from '@react-three/drei';
+import { Sphere, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface OrbProps {
   isSpeaking: boolean;
 }
 
-function Particles({ count = 50, isSpeaking }: { count?: number; isSpeaking: boolean }) {
-  const points = useRef<THREE.Points>(null);
-  
-  const particlesPosition = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.random() * Math.PI;
-      const radius = 2 + Math.random() * 1;
-      
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = radius * Math.cos(phi);
-    }
-    return positions;
-  }, [count]);
-
-  useFrame((state) => {
-    if (!points.current) return;
-    const time = state.clock.getElapsedTime();
-    points.current.rotation.y = time * 0.05;
-    points.current.rotation.x = time * 0.03;
-  });
-
-  return (
-    <points ref={points}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={count}
-          array={particlesPosition}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={isSpeaking ? 0.08 : 0.04}
-        color="#d4a5ff"
-        transparent
-        opacity={isSpeaking ? 0.8 : 0.4}
-        sizeAttenuation
-      />
-    </points>
-  );
-}
-
 function CoreOrb({ isSpeaking }: OrbProps) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const distortRef = useRef(0.3);
+  const distortRef = useRef(0.2);
   const scaleRef = useRef(1);
-  const intensityRef = useRef(0.5);
+  const intensityRef = useRef(1.5);
 
   useFrame((state) => {
     if (!meshRef.current) return;
 
     const time = state.clock.getElapsedTime();
     
-    // Gentle rotation
-    meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.2;
-    meshRef.current.rotation.y = time * 0.1;
+    // Subtle rotation
+    meshRef.current.rotation.y = time * 0.15;
 
     // Dynamic distortion and scale based on speaking state
-    const targetDistort = isSpeaking ? 0.8 : 0.3;
-    const targetScale = isSpeaking ? 1.2 : 1;
-    const targetIntensity = isSpeaking ? 1.2 : 0.5;
+    const targetDistort = isSpeaking ? 0.4 : 0.2;
+    const targetScale = isSpeaking ? 1.15 : 1;
+    const targetIntensity = isSpeaking ? 2.5 : 1.5;
     
-    distortRef.current += (targetDistort - distortRef.current) * 0.1;
-    scaleRef.current += (targetScale - scaleRef.current) * 0.1;
-    intensityRef.current += (targetIntensity - intensityRef.current) * 0.1;
+    distortRef.current += (targetDistort - distortRef.current) * 0.08;
+    scaleRef.current += (targetScale - scaleRef.current) * 0.08;
+    intensityRef.current += (targetIntensity - intensityRef.current) * 0.08;
 
     meshRef.current.scale.setScalar(scaleRef.current);
   });
 
   return (
-    <Sphere ref={meshRef} args={[1, 128, 128]}>
+    <Sphere ref={meshRef} args={[1, 100, 100]}>
       <MeshDistortMaterial
-        color="#b794f6"
+        color="#4fc3f7"
         attach="material"
         distort={distortRef.current}
-        speed={isSpeaking ? 3 : 1.2}
-        roughness={0.2}
-        metalness={0.8}
-        emissive="#d4a5ff"
+        speed={isSpeaking ? 2.5 : 1.5}
+        roughness={0.1}
+        metalness={0.9}
+        emissive="#00bcd4"
         emissiveIntensity={intensityRef.current}
         transparent
-        opacity={0.85}
+        opacity={0.9}
       />
     </Sphere>
   );
 }
 
-function RotatingRings({ isSpeaking }: OrbProps) {
-  const ring1 = useRef<THREE.Mesh>(null);
-  const ring2 = useRef<THREE.Mesh>(null);
-  const ring3 = useRef<THREE.Mesh>(null);
+function HorizontalLines({ isSpeaking }: OrbProps) {
+  const linesRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!linesRef.current) return;
+    const time = state.clock.getElapsedTime();
+    linesRef.current.children.forEach((line, i) => {
+      const offset = i * 0.2;
+      const mesh = line as THREE.Mesh;
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      material.opacity = 0.3 + Math.sin(time * (isSpeaking ? 3 : 1.5) + offset) * 0.2;
+    });
+  });
+
+  return (
+    <group ref={linesRef}>
+      {[-1.5, -0.75, 0, 0.75, 1.5].map((y, i) => (
+        <mesh key={i} position={[0, y, 0]}>
+          <planeGeometry args={[10, 0.02]} />
+          <meshBasicMaterial 
+            color="#4fc3f7" 
+            transparent 
+            opacity={0.3} 
+            side={THREE.DoubleSide} 
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function CircularRings({ isSpeaking }: OrbProps) {
+  const outerRing = useRef<THREE.Mesh>(null);
+  const middleRing = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
-    const speed = isSpeaking ? 2 : 1;
+    const speed = isSpeaking ? 0.5 : 0.3;
     
-    if (ring1.current) {
-      ring1.current.rotation.x = time * 0.3 * speed;
-      ring1.current.rotation.y = time * 0.2 * speed;
+    if (outerRing.current) {
+      outerRing.current.rotation.z = time * speed;
     }
-    if (ring2.current) {
-      ring2.current.rotation.x = -time * 0.4 * speed;
-      ring2.current.rotation.z = time * 0.3 * speed;
-    }
-    if (ring3.current) {
-      ring3.current.rotation.y = time * 0.5 * speed;
-      ring3.current.rotation.z = -time * 0.2 * speed;
+    if (middleRing.current) {
+      middleRing.current.rotation.z = -time * speed * 0.8;
     }
   });
 
-  const ringOpacity = isSpeaking ? 0.6 : 0.3;
-
   return (
     <>
-      <Ring ref={ring1} args={[1.8, 2, 64]}>
-        <meshBasicMaterial color="#d4a5ff" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
-      </Ring>
-      <Ring ref={ring2} args={[2.2, 2.4, 64]}>
-        <meshBasicMaterial color="#7dd3c0" transparent opacity={ringOpacity} side={THREE.DoubleSide} />
-      </Ring>
-      <Ring ref={ring3} args={[2.6, 2.8, 64]}>
-        <meshBasicMaterial color="#ffd89b" transparent opacity={ringOpacity * 0.7} side={THREE.DoubleSide} />
-      </Ring>
+      <mesh ref={outerRing}>
+        <torusGeometry args={[2.5, 0.01, 16, 100]} />
+        <meshBasicMaterial color="#4fc3f7" transparent opacity={isSpeaking ? 0.6 : 0.4} />
+      </mesh>
+      <mesh ref={middleRing}>
+        <torusGeometry args={[2, 0.01, 16, 100]} />
+        <meshBasicMaterial color="#b794f6" transparent opacity={isSpeaking ? 0.5 : 0.3} />
+      </mesh>
+      <mesh>
+        <torusGeometry args={[1.5, 0.015, 16, 100]} />
+        <meshBasicMaterial color="#7dd3c0" transparent opacity={isSpeaking ? 0.7 : 0.5} />
+      </mesh>
     </>
   );
 }
@@ -140,21 +119,34 @@ function RotatingRings({ isSpeaking }: OrbProps) {
 export function AnimatedOrb({ isSpeaking }: OrbProps) {
   return (
     <div className="w-full h-full relative">
-      {/* Glowing background effect */}
-      <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-transparent to-transparent blur-3xl" />
+      {/* Centered glowing background */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className={`w-96 h-96 rounded-full transition-all duration-500 ${
+          isSpeaking 
+            ? 'bg-[#4fc3f7]/30 blur-[120px]' 
+            : 'bg-[#4fc3f7]/20 blur-[100px]'
+        }`} />
+      </div>
       
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-        {/* Enhanced lighting */}
-        <ambientLight intensity={0.3} />
-        <pointLight position={[0, 0, 0]} intensity={isSpeaking ? 2 : 1} color="#d4a5ff" />
-        <pointLight position={[10, 10, 10]} intensity={0.5} color="#b794f6" />
-        <pointLight position={[-10, -10, -10]} intensity={0.3} color="#7dd3c0" />
-        <pointLight position={[5, -5, 5]} intensity={0.2} color="#ffd89b" />
+      <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+        {/* Focused lighting */}
+        <ambientLight intensity={0.2} />
+        <pointLight 
+          position={[0, 0, 0]} 
+          intensity={isSpeaking ? 3 : 2} 
+          color="#00bcd4"
+          distance={10}
+        />
+        <pointLight 
+          position={[0, 0, 5]} 
+          intensity={isSpeaking ? 2 : 1} 
+          color="#4fc3f7"
+        />
         
-        {/* Core components */}
+        {/* Core components matching reference */}
         <CoreOrb isSpeaking={isSpeaking} />
-        <RotatingRings isSpeaking={isSpeaking} />
-        <Particles count={100} isSpeaking={isSpeaking} />
+        <CircularRings isSpeaking={isSpeaking} />
+        <HorizontalLines isSpeaking={isSpeaking} />
       </Canvas>
     </div>
   );
