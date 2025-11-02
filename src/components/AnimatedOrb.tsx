@@ -65,19 +65,19 @@ function HorizontalLines({ isSpeaking }: OrbProps) {
       const offset = i * 0.3;
       const mesh = line as THREE.Mesh;
       const material = mesh.material as THREE.MeshBasicMaterial;
-      material.opacity = 0.15 + Math.sin(time * (isSpeaking ? 2 : 1) + offset) * 0.1;
+      material.opacity = 0.2 + Math.sin(time * (isSpeaking ? 2 : 1) + offset) * 0.15;
     });
   });
 
   return (
     <group ref={linesRef}>
-      {[-2, -1, 0, 1, 2].map((y, i) => (
+      {[-2.5, -1.5, -0.5, 0.5, 1.5, 2.5].map((y, i) => (
         <mesh key={i} position={[0, y, 0]}>
-          <planeGeometry args={[12, 0.015]} />
+          <planeGeometry args={[14, 0.02]} />
           <meshBasicMaterial 
-            color="#6EE7F9" 
+            color="#00C8FF" 
             transparent 
-            opacity={0.15} 
+            opacity={0.25} 
             side={THREE.DoubleSide} 
           />
         </mesh>
@@ -166,21 +166,21 @@ function CircularRings({ isSpeaking }: OrbProps) {
 export function AnimatedOrb({ isSpeaking }: OrbProps) {
   return (
     <div className="w-full h-full relative">
-      {/* Holographic glow layers */}
+      {/* Primary glow - intense center */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-[600px] h-[600px] rounded-full transition-all duration-700 ${
+        <div className={`w-[400px] h-[400px] rounded-full transition-all duration-700 ${
           isSpeaking 
-            ? 'bg-[#00C8FF]/50 blur-[150px] animate-pulse-intense' 
-            : 'bg-[#00C8FF]/30 blur-[120px] animate-breathe'
+            ? 'bg-[#00C8FF]/60 blur-[100px]' 
+            : 'bg-[#00C8FF]/40 blur-[80px]'
         }`} style={{ mixBlendMode: 'screen' }} />
       </div>
       
-      {/* Core radiance */}
+      {/* Core bright spot */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-[250px] h-[250px] rounded-full transition-all duration-500 ${
+        <div className={`w-[150px] h-[150px] rounded-full transition-all duration-500 ${
           isSpeaking 
-            ? 'bg-[#62E5FF]/60 blur-[80px]' 
-            : 'bg-[#62E5FF]/40 blur-[60px]'
+            ? 'bg-white/80 blur-[60px]' 
+            : 'bg-white/50 blur-[50px]'
         }`} style={{ mixBlendMode: 'lighten' }} />
       </div>
       
