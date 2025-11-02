@@ -9,29 +9,30 @@ interface OrbProps {
 
 function CoreOrb({ isSpeaking }: OrbProps) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const distortRef = useRef(0.15);
+  const distortRef = useRef(0.12);
   const scaleRef = useRef(1);
-  const intensityRef = useRef(3);
+  const intensityRef = useRef(2.5);
 
   useFrame((state) => {
     if (!meshRef.current) return;
 
     const time = state.clock.getElapsedTime();
     
-    // Breathing rotation
-    meshRef.current.rotation.y = time * 0.1;
+    // Gentle rotation
+    meshRef.current.rotation.y = time * 0.08;
+    meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.1;
 
-    // Breathing pulse based on speaking state
-    const targetDistort = isSpeaking ? 0.25 : 0.15;
-    const targetScale = isSpeaking ? 1.08 : 1.04;
-    const targetIntensity = isSpeaking ? 4 : 3;
+    // Voice-reactive breathing
+    const targetDistort = isSpeaking ? 0.28 : 0.12;
+    const targetScale = isSpeaking ? 1.1 : 1.0;
+    const targetIntensity = isSpeaking ? 4.5 : 2.5;
     
-    // Add breathing rhythm
-    const breathe = Math.sin(time * 0.5) * 0.02 + 1;
+    // Natural breathing rhythm
+    const breathe = Math.sin(time * 0.5) * 0.03 + 1;
     
-    distortRef.current += (targetDistort - distortRef.current) * 0.05;
-    scaleRef.current += (targetScale * breathe - scaleRef.current) * 0.05;
-    intensityRef.current += (targetIntensity - intensityRef.current) * 0.05;
+    distortRef.current += (targetDistort - distortRef.current) * 0.08;
+    scaleRef.current += (targetScale * breathe - scaleRef.current) * 0.06;
+    intensityRef.current += (targetIntensity - intensityRef.current) * 0.08;
 
     meshRef.current.scale.setScalar(scaleRef.current);
   });
@@ -39,16 +40,16 @@ function CoreOrb({ isSpeaking }: OrbProps) {
   return (
     <Sphere ref={meshRef} args={[1, 128, 128]}>
       <MeshDistortMaterial
-        color="#6EE7F9"
+        color="#00C8FF"
         attach="material"
         distort={distortRef.current}
-        speed={isSpeaking ? 2 : 1.2}
+        speed={isSpeaking ? 2.5 : 1}
         roughness={0}
         metalness={1}
-        emissive="#A5F3FC"
+        emissive="#62E5FF"
         emissiveIntensity={intensityRef.current}
         transparent
-        opacity={0.95}
+        opacity={0.9}
       />
     </Sphere>
   );
@@ -94,45 +95,69 @@ function CircularRings({ isSpeaking }: OrbProps) {
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
-    const speed = isSpeaking ? 0.3 : 0.2;
+    const baseSpeed = 0.15;
+    const speed = isSpeaking ? 0.35 : baseSpeed;
     
-    if (ring1.current) ring1.current.rotation.z = time * speed;
-    if (ring2.current) ring2.current.rotation.z = -time * speed * 0.8;
-    if (ring3.current) ring3.current.rotation.z = time * speed * 0.6;
-    if (ring4.current) ring4.current.rotation.z = -time * speed * 0.4;
-    if (ring5.current) ring5.current.rotation.z = time * speed * 0.5;
+    // Breathing pulse effect for each ring
+    const breathe = Math.sin(time * 0.8) * 0.15 + 1;
+    
+    if (ring1.current) {
+      ring1.current.rotation.z = time * speed;
+      const scale = breathe * (isSpeaking ? 1.05 : 1);
+      ring1.current.scale.setScalar(scale);
+    }
+    if (ring2.current) {
+      ring2.current.rotation.z = -time * speed * 0.8;
+      const scale = breathe * (isSpeaking ? 1.08 : 1);
+      ring2.current.scale.setScalar(scale);
+    }
+    if (ring3.current) {
+      ring3.current.rotation.z = time * speed * 0.6;
+      const scale = breathe * (isSpeaking ? 1.12 : 1);
+      ring3.current.scale.setScalar(scale);
+    }
+    if (ring4.current) {
+      ring4.current.rotation.z = -time * speed * 0.4;
+      const scale = breathe * (isSpeaking ? 1.15 : 1);
+      ring4.current.scale.setScalar(scale);
+    }
+    if (ring5.current) {
+      ring5.current.rotation.z = time * speed * 0.5;
+      const scale = breathe * (isSpeaking ? 1.18 : 1);
+      ring5.current.scale.setScalar(scale);
+    }
   });
 
   return (
     <>
       {/* Innermost ring */}
       <mesh ref={ring1}>
-        <torusGeometry args={[1.3, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#6EE7F9" transparent opacity={isSpeaking ? 0.4 : 0.25} />
+        <torusGeometry args={[1.3, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#00C8FF" transparent opacity={isSpeaking ? 0.7 : 0.4} />
       </mesh>
       
       {/* Second ring */}
       <mesh ref={ring2}>
-        <torusGeometry args={[1.7, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#A5F3FC" transparent opacity={isSpeaking ? 0.35 : 0.2} />
+        <torusGeometry args={[1.7, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#62E5FF" transparent opacity={isSpeaking ? 0.6 : 0.35} />
       </mesh>
       
       {/* Middle ring */}
       <mesh ref={ring3}>
-        <torusGeometry args={[2.1, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#6EE7F9" transparent opacity={isSpeaking ? 0.3 : 0.18} />
+        <torusGeometry args={[2.1, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#00C8FF" transparent opacity={isSpeaking ? 0.5 : 0.3} />
       </mesh>
       
       {/* Fourth ring */}
       <mesh ref={ring4}>
-        <torusGeometry args={[2.5, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#A5F3FC" transparent opacity={isSpeaking ? 0.25 : 0.15} />
+        <torusGeometry args={[2.5, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#62E5FF" transparent opacity={isSpeaking ? 0.4 : 0.25} />
       </mesh>
       
       {/* Outermost ring */}
       <mesh ref={ring5}>
-        <torusGeometry args={[2.9, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#6EE7F9" transparent opacity={isSpeaking ? 0.2 : 0.12} />
+        <torusGeometry args={[2.9, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#00C8FF" transparent opacity={isSpeaking ? 0.35 : 0.2} />
       </mesh>
     </>
   );
@@ -141,44 +166,50 @@ function CircularRings({ isSpeaking }: OrbProps) {
 export function AnimatedOrb({ isSpeaking }: OrbProps) {
   return (
     <div className="w-full h-full relative">
-      {/* Intense centered glow matching reference */}
+      {/* Holographic glow layers */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-[500px] h-[500px] rounded-full transition-all duration-500 ${
+        <div className={`w-[600px] h-[600px] rounded-full transition-all duration-700 ${
           isSpeaking 
-            ? 'bg-[#6EE7F9]/40 blur-[150px] animate-breathe' 
-            : 'bg-[#6EE7F9]/30 blur-[120px] animate-breathe'
-        }`} />
+            ? 'bg-[#00C8FF]/50 blur-[150px] animate-pulse-intense' 
+            : 'bg-[#00C8FF]/30 blur-[120px] animate-breathe'
+        }`} style={{ mixBlendMode: 'screen' }} />
       </div>
       
-      {/* Inner core glow */}
+      {/* Core radiance */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-[200px] h-[200px] rounded-full transition-all duration-300 ${
+        <div className={`w-[250px] h-[250px] rounded-full transition-all duration-500 ${
           isSpeaking 
-            ? 'bg-white/50 blur-[80px]' 
-            : 'bg-white/30 blur-[60px]'
-        }`} />
+            ? 'bg-[#62E5FF]/60 blur-[80px]' 
+            : 'bg-[#62E5FF]/40 blur-[60px]'
+        }`} style={{ mixBlendMode: 'lighten' }} />
       </div>
       
       <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
-        {/* Enhanced lighting for intense glow */}
-        <ambientLight intensity={0.3} />
+        {/* Voice-reactive lighting */}
+        <ambientLight intensity={0.2} />
         <pointLight 
           position={[0, 0, 0]} 
-          intensity={isSpeaking ? 5 : 3.5} 
-          color="#6EE7F9"
+          intensity={isSpeaking ? 6 : 4} 
+          color="#00C8FF"
           distance={15}
           decay={2}
         />
         <pointLight 
           position={[0, 0, 4]} 
-          intensity={isSpeaking ? 3 : 2} 
-          color="#A5F3FC"
-          distance={10}
+          intensity={isSpeaking ? 4 : 2.5} 
+          color="#62E5FF"
+          distance={12}
+          decay={1.8}
         />
         <pointLight 
           position={[3, 0, 3]} 
-          intensity={1} 
-          color="#A78BFA"
+          intensity={1.5} 
+          color="#B8E8FF"
+        />
+        <pointLight 
+          position={[-3, 0, 3]} 
+          intensity={1.5} 
+          color="#B8E8FF"
         />
         
         {/* Core components */}

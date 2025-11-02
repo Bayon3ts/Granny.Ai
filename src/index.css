@@ -8,37 +8,38 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Granny.AI Core Colors - Exact Reference Match */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 187 92% 69%; /* #6EE7F9 - Cyan */
-    --primary-foreground: 222 47% 11%;
-    --secondary: 218 87% 65%; /* #A78BFA - Lavender */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 187 92% 80%; /* #A5F3FC - Light Cyan */
-    --accent-foreground: 222 47% 11%;
+    /* Granny.AI Core Colors - Voice-Reactive Interface */
+    --background: 212 100% 2%; /* #02040A - Deep space blue-black */
+    --foreground: 195 100% 94%; /* #E0F7FF - Clean readable */
+    --card: 212 100% 2%;
+    --card-foreground: 195 100% 94%;
+    --popover: 212 100% 2%;
+    --popover-foreground: 195 100% 94%;
+    --primary: 193 100% 50%; /* #00C8FF - Primary cyan */
+    --primary-foreground: 212 100% 2%;
+    --secondary: 193 100% 69%; /* #62E5FF - Halo edge */
+    --secondary-foreground: 195 100% 94%;
+    --muted: 212 50% 10%;
+    --muted-foreground: 193 100% 85%; /* #B8E8FF - Accent sparks */
+    --accent: 193 100% 85%; /* #B8E8FF - Light flickers */
+    --accent-foreground: 212 100% 2%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 32% 17%;
-    --input: 217 32% 17%;
-    --ring: 187 92% 69%;
+    --destructive-foreground: 195 100% 94%;
+    --border: 212 50% 10%;
+    --input: 212 50% 10%;
+    --ring: 193 100% 50%;
 
     --radius: 0.75rem;
 
     /* Granny.AI specific tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(187, 92%, 69%), hsl(187, 92%, 80%));
-    --gradient-text: linear-gradient(135deg, hsl(187, 92%, 69%), hsl(218, 87%, 65%));
-    --gradient-background: linear-gradient(180deg, #020617, #0B1120);
+    --gradient-primary: linear-gradient(135deg, hsl(193, 100%, 50%), hsl(193, 100%, 69%));
+    --gradient-text: linear-gradient(135deg, hsl(193, 100%, 50%), hsl(262, 87%, 65%));
+    --gradient-core: radial-gradient(circle, hsl(193, 100%, 50%), hsl(193, 100%, 69%));
+    --gradient-background: #02040A;
     
-    --shadow-core: 0 0 60px hsl(187, 92%, 69% / 0.6), 0 0 100px hsl(187, 92%, 69% / 0.3);
-    --shadow-ring: 0 0 20px hsl(187, 92%, 80% / 0.4);
-    --shadow-button: 0 0 20px hsl(187, 92%, 69% / 0.5);
+    --shadow-core: 0 0 80px hsl(193, 100%, 50% / 0.8), 0 0 120px hsl(193, 100%, 50% / 0.4);
+    --shadow-ring: 0 0 40px hsl(193, 100%, 69% / 0.6);
+    --shadow-glow: 0 0 100px hsl(193, 100%, 50% / 0.5);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -110,11 +111,57 @@ All colors MUST be HSL.
 @keyframes breathe {
   0%, 100% {
     transform: scale(1);
+    opacity: 0.8;
     filter: brightness(1);
   }
   50% {
-    transform: scale(1.04);
+    transform: scale(1.05);
+    opacity: 1;
     filter: brightness(1.2);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0;
+    transform: translateX(-10%) rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateX(10%) rotate(5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-10%) rotate(0deg);
+  }
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drawRing {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
@@ -201,7 +248,23 @@ All colors MUST be HSL.
 }
 
 .animate-breathe {
-  animation: breathe 3s ease-in-out infinite;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-flicker {
+  animation: flicker 2s ease-in-out infinite;
+}
+
+.animate-fade-in-slow {
+  animation: fadeIn 2s ease-out;
+}
+
+.animate-draw-ring {
+  animation: drawRing 1s ease-out forwards;
 }
 
 .animate-pulse-intense {
