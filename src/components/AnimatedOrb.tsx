@@ -40,16 +40,16 @@ function CoreOrb({ isSpeaking }: OrbProps) {
   return (
     <Sphere ref={meshRef} args={[1, 128, 128]}>
       <MeshDistortMaterial
-        color="#FFFFFF"
+        color="#00C8FF"
         attach="material"
         distort={distortRef.current}
         speed={isSpeaking ? 2.5 : 1}
         roughness={0}
-        metalness={0.8}
-        emissive="#00C8FF"
+        metalness={1}
+        emissive="#62E5FF"
         emissiveIntensity={intensityRef.current}
         transparent
-        opacity={0.95}
+        opacity={0.9}
       />
     </Sphere>
   );
@@ -65,19 +65,19 @@ function HorizontalLines({ isSpeaking }: OrbProps) {
       const offset = i * 0.3;
       const mesh = line as THREE.Mesh;
       const material = mesh.material as THREE.MeshBasicMaterial;
-      material.opacity = 0.15 + Math.sin(time * (isSpeaking ? 2 : 1) + offset) * 0.1;
+      material.opacity = 0.2 + Math.sin(time * (isSpeaking ? 2 : 1) + offset) * 0.15;
     });
   });
 
   return (
     <group ref={linesRef}>
-      {[-2, -1.2, -0.5, 0, 0.5, 1.2, 2].map((y, i) => (
+      {[-2.5, -1.5, -0.5, 0.5, 1.5, 2.5].map((y, i) => (
         <mesh key={i} position={[0, y, 0]}>
-          <planeGeometry args={[20, 0.008]} />
+          <planeGeometry args={[14, 0.02]} />
           <meshBasicMaterial 
-            color="#00A8E8" 
+            color="#00C8FF" 
             transparent 
-            opacity={i === 3 ? 0.4 : 0.2} 
+            opacity={0.25} 
             side={THREE.DoubleSide} 
           />
         </mesh>
@@ -132,32 +132,32 @@ function CircularRings({ isSpeaking }: OrbProps) {
     <>
       {/* Innermost ring */}
       <mesh ref={ring1}>
-        <torusGeometry args={[1.4, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#00A8E8" transparent opacity={isSpeaking ? 0.5 : 0.3} />
+        <torusGeometry args={[1.3, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#00C8FF" transparent opacity={isSpeaking ? 0.7 : 0.4} />
       </mesh>
       
       {/* Second ring */}
       <mesh ref={ring2}>
-        <torusGeometry args={[1.9, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#0088CC" transparent opacity={isSpeaking ? 0.4 : 0.25} />
+        <torusGeometry args={[1.7, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#62E5FF" transparent opacity={isSpeaking ? 0.6 : 0.35} />
       </mesh>
       
       {/* Middle ring */}
       <mesh ref={ring3}>
-        <torusGeometry args={[2.4, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#00A8E8" transparent opacity={isSpeaking ? 0.35 : 0.2} />
+        <torusGeometry args={[2.1, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#00C8FF" transparent opacity={isSpeaking ? 0.5 : 0.3} />
       </mesh>
       
       {/* Fourth ring */}
       <mesh ref={ring4}>
-        <torusGeometry args={[2.9, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#0088CC" transparent opacity={isSpeaking ? 0.3 : 0.18} />
+        <torusGeometry args={[2.5, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#62E5FF" transparent opacity={isSpeaking ? 0.4 : 0.25} />
       </mesh>
       
       {/* Outermost ring */}
       <mesh ref={ring5}>
-        <torusGeometry args={[3.4, 0.008, 32, 100]} />
-        <meshBasicMaterial color="#00A8E8" transparent opacity={isSpeaking ? 0.25 : 0.15} />
+        <torusGeometry args={[2.9, 0.01, 32, 100]} />
+        <meshBasicMaterial color="#00C8FF" transparent opacity={isSpeaking ? 0.35 : 0.2} />
       </mesh>
     </>
   );
@@ -165,42 +165,54 @@ function CircularRings({ isSpeaking }: OrbProps) {
 
 export function AnimatedOrb({ isSpeaking }: OrbProps) {
   return (
-    <div className="w-full h-full absolute inset-0">
-      {/* Intense white core glow */}
+    <div className="w-full h-full relative">
+      {/* Primary glow - intense center */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-[300px] h-[300px] rounded-full transition-all duration-500 ${
+        <div className={`w-[400px] h-[400px] rounded-full transition-all duration-700 ${
           isSpeaking 
-            ? 'bg-white/90 blur-[120px]' 
-            : 'bg-white/70 blur-[100px]'
+            ? 'bg-[#00C8FF]/60 blur-[100px]' 
+            : 'bg-[#00C8FF]/40 blur-[80px]'
         }`} style={{ mixBlendMode: 'screen' }} />
       </div>
       
-      {/* Cyan outer glow */}
+      {/* Core bright spot */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`w-[500px] h-[500px] rounded-full transition-all duration-700 ${
+        <div className={`w-[150px] h-[150px] rounded-full transition-all duration-500 ${
           isSpeaking 
-            ? 'bg-[#00A8E8]/50 blur-[140px]' 
-            : 'bg-[#00A8E8]/30 blur-[120px]'
-        }`} style={{ mixBlendMode: 'screen' }} />
+            ? 'bg-white/80 blur-[60px]' 
+            : 'bg-white/50 blur-[50px]'
+        }`} style={{ mixBlendMode: 'lighten' }} />
       </div>
       
-      <Canvas camera={{ position: [0, 0, 7], fov: 45 }}>
-        <ambientLight intensity={0.3} />
+      <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+        {/* Voice-reactive lighting */}
+        <ambientLight intensity={0.2} />
         <pointLight 
           position={[0, 0, 0]} 
-          intensity={isSpeaking ? 8 : 6} 
-          color="#FFFFFF"
+          intensity={isSpeaking ? 6 : 4} 
+          color="#00C8FF"
           distance={15}
           decay={2}
         />
         <pointLight 
-          position={[0, 0, 3]} 
-          intensity={isSpeaking ? 5 : 3} 
-          color="#00C8FF"
+          position={[0, 0, 4]} 
+          intensity={isSpeaking ? 4 : 2.5} 
+          color="#62E5FF"
           distance={12}
-          decay={1.5}
+          decay={1.8}
+        />
+        <pointLight 
+          position={[3, 0, 3]} 
+          intensity={1.5} 
+          color="#B8E8FF"
+        />
+        <pointLight 
+          position={[-3, 0, 3]} 
+          intensity={1.5} 
+          color="#B8E8FF"
         />
         
+        {/* Core components */}
         <CoreOrb isSpeaking={isSpeaking} />
         <CircularRings isSpeaking={isSpeaking} />
         <HorizontalLines isSpeaking={isSpeaking} />
